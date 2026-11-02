@@ -10,12 +10,14 @@ const expenseSlice = createSlice({
       // data obj property
       state.expenses.push(action.payload);
     },
+
     deleteExpense: (state, action) => {
       // id property
       state.expenses = state.expenses.filter(
         (expense) => expense.id !== action.payload,
       );
     },
+
     updateExpense: (state, action) => {
       // id and data obj property
       const { id, expenseData } = action.payload;

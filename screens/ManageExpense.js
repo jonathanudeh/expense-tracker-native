@@ -3,10 +3,19 @@ import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/ui/Button";
+import { useDispatch } from "react-redux";
+import {
+  addExpense,
+  deleteExpense,
+  updateExpense,
+} from "../store/expenseSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 function ManageExpense({ route, navigation }) {
   const expenseId = route.params?.expenseId;
   const isEditing = !!expenseId;
+
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -15,6 +24,7 @@ function ManageExpense({ route, navigation }) {
   }, [navigation, isEditing]);
 
   function deleteExpensehandler() {
+    dispatch(deleteExpense(expenseId));
     navigation.goBack();
   }
 
@@ -23,6 +33,25 @@ function ManageExpense({ route, navigation }) {
   }
 
   function confirmHandler() {
+    //   dummy data until input field is provided
+    const dummyData = {
+      description: "Text",
+      amount: 19.99,
+      date: new Date().toISOString(),
+    };
+
+    if (isEditing) {
+      dispatch(
+        updateExpense({
+          id: expenseId,
+          expenseData: { ...dummyData, description: "updated text" },
+        }),
+      );
+    } else {
+      const id = nanoid();
+      dispatch(addExpense({ id, ...dummyData }));
+    }
+
     navigation.goBack();
   }
 
