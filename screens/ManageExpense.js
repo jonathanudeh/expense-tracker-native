@@ -10,6 +10,7 @@ import {
   updateExpense,
 } from "../store/expenseSlice";
 import { nanoid } from "@reduxjs/toolkit";
+import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 
 function ManageExpense({ route, navigation }) {
   const expenseId = route.params?.expenseId;
@@ -57,6 +58,8 @@ function ManageExpense({ route, navigation }) {
 
   return (
     <View style={styles.container}>
+      <ExpenseForm />
+
       <View style={styles.buttons}>
         <Button mode="flat" onPress={cancelHandler} style={styles.button}>
           Cancel
