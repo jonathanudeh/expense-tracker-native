@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import Button from "../components/ui/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addExpense,
   deleteExpense,
@@ -13,10 +13,15 @@ import { nanoid } from "@reduxjs/toolkit";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 
 function ManageExpense({ route, navigation }) {
-  const expenseId = route.params?.expenseId;
-  const isEditing = !!expenseId;
+  const editedExpenseId = route.params?.expenseId;
+  const isEditing = !!editedExpenseId;
 
   const dispatch = useDispatch();
+
+  const { expenses } = useSelector((state) => state.expense);
+  const selectedExpense = expenses.find(
+    (expense) => expense.id === editedExpenseId,
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,7 +30,7 @@ function ManageExpense({ route, navigation }) {
   }, [navigation, isEditing]);
 
   function deleteExpensehandler() {
-    dispatch(deleteExpense(expenseId));
+    dispatch(deleteExpense(editedExpenseId));
     navigation.goBack();
   }
 
@@ -37,7 +42,7 @@ function ManageExpense({ route, navigation }) {
     if (isEditing) {
       dispatch(
         updateExpense({
-          id: expenseId,
+          id: editedExpenseId,
           expenseData,
         }),
       );
@@ -55,6 +60,7 @@ function ManageExpense({ route, navigation }) {
         submitButtonLabel={isEditing ? "Update" : "Add"}
         onSubmit={confirmHandler}
         onCancel={cancelHandler}
+        defaultValues={selectedExpense}
       />
 
       {isEditing && (
