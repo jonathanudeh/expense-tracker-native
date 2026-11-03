@@ -33,24 +33,17 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler() {
-    //   dummy data until input field is provided
-    const dummyData = {
-      description: "Text",
-      amount: 19.99,
-      date: new Date().toISOString(),
-    };
-
+  function confirmHandler(expenseData) {
     if (isEditing) {
       dispatch(
         updateExpense({
           id: expenseId,
-          expenseData: { ...dummyData, description: "updated text" },
+          expenseData,
         }),
       );
     } else {
       const id = nanoid();
-      dispatch(addExpense({ id, ...dummyData }));
+      dispatch(addExpense({ id, ...expenseData }));
     }
 
     navigation.goBack();
@@ -59,8 +52,9 @@ function ManageExpense({ route, navigation }) {
   return (
     <View style={styles.container}>
       <ExpenseForm
-        onCancel={cancelHandler}
         submitButtonLabel={isEditing ? "Update" : "Add"}
+        onSubmit={confirmHandler}
+        onCancel={cancelHandler}
       />
 
       {isEditing && (

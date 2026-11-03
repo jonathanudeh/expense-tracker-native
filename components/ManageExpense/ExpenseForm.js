@@ -20,7 +20,16 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel }) {
     });
   }
 
-  function submitHandler() {}
+  function submitHandler() {
+    const expenseData = {
+      amount: +amount, //converts to number
+      date: new Date(date).toISOString(),
+      // date: new Date(date),
+      description: description,
+    };
+
+    onSubmit(expenseData);
+  }
 
   return (
     <View style={styles.form}>
@@ -32,7 +41,8 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel }) {
           label="Amount"
           textInputConfig={{
             keyboardType: "decimal-pad",
-            onChangeText: () => inputChangeHandler("amount"),
+            onChangeText: (enteredValue) =>
+              inputChangeHandler("amount", enteredValue),
             value: amount,
           }}
         />
@@ -42,7 +52,8 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel }) {
           textInputConfig={{
             placeholder: "YYYY-MM-DD",
             maxLength: "10",
-            onChangeText: () => inputChangeHandler("date"),
+            onChangeText: (enteredValue) =>
+              inputChangeHandler("date", enteredValue),
             value: date,
           }}
         />
@@ -53,7 +64,8 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel }) {
         textInputConfig={{
           multiline: true,
           autoCorrect: true,
-          onChangeText: () => inputChangeHandler("description"),
+          onChangeText: (enteredValue) =>
+            inputChangeHandler("description", enteredValue),
           value: description,
         }}
       />
