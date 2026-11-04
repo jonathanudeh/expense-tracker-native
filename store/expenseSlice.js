@@ -11,6 +11,11 @@ const expenseSlice = createSlice({
       state.expenses.push(action.payload);
     },
 
+    setExpenses: (state, action) => {
+      // for firebase http request
+      state.expenses = action.payload;
+    },
+
     deleteExpense: (state, action) => {
       // id property
       state.expenses = state.expenses.filter(
@@ -38,7 +43,7 @@ const expenseSlice = createSlice({
   },
 });
 
-export const { addExpense, deleteExpense, updateExpense } =
+export const { addExpense, deleteExpense, updateExpense, setExpenses } =
   expenseSlice.actions;
 
 export default expenseSlice.reducer;
