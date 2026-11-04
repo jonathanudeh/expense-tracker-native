@@ -16,7 +16,7 @@ export async function getExpenses() {
     const expenseObj = {
       id: key,
       amount: response.data[key].amount,
-      date: new Date(response.data[key].date),
+      date: response.data[key].date,
       description: response.data[key].description,
     };
 

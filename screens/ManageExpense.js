@@ -51,8 +51,7 @@ function ManageExpense({ route, navigation }) {
       // backend communication with firebase
       storeExpense(expenseData);
 
-      const id = nanoid();
-      dispatch(addExpense({ id, ...expenseData }));
+      dispatch(addExpense({ ...expenseData }));
     }
 
     navigation.goBack();

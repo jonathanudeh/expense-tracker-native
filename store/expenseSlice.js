@@ -8,12 +8,13 @@ const expenseSlice = createSlice({
   reducers: {
     addExpense: (state, action) => {
       // data obj property
-      state.expenses.push(action.payload);
+      state.expenses.unshift(action.payload);
     },
 
     setExpenses: (state, action) => {
       // for firebase http request
-      state.expenses = action.payload;
+      const inverted = action.payload.reverse();
+      state.expenses = inverted;
     },
 
     deleteExpense: (state, action) => {
