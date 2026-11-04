@@ -6,12 +6,12 @@ import Button from "../components/ui/Button";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addExpense,
-  deleteExpense,
-  updateExpense,
+  updateExpenseStore,
+  deleteExpenseStore,
 } from "../store/expenseSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
-import { storeExpense } from "../util/http";
+import { deleteExpense, storeExpense, updateExpense } from "../util/http";
 
 function ManageExpense({ route, navigation }) {
   const editedExpenseId = route.params?.expenseId;
@@ -30,8 +30,9 @@ function ManageExpense({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  function deleteExpensehandler() {
-    dispatch(deleteExpense(editedExpenseId));
+  async function deleteExpensehandler() {
+    await deleteExpense(editedExpenseId);
+    dispatch(deleteExpenseStore(editedExpenseId));
     navigation.goBack();
   }
 
@@ -39,19 +40,21 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler(expenseData) {
+  async function confirmHandler(expenseData) {
     if (isEditing) {
       dispatch(
-        updateExpense({
+        updateExpenseStore({
           id: editedExpenseId,
           expenseData,
         }),
       );
+
+      await updateExpense(editedExpenseId, expenseData);
     } else {
       // backend communication with firebase
-      storeExpense(expenseData);
+      const id = await storeExpense(expenseData);
 
-      dispatch(addExpense({ ...expenseData }));
+      dispatch(addExpense({ ...expenseData, id }));
     }
 
     navigation.goBack();

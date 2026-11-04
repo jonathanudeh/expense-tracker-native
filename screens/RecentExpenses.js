@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import ExpensesOutput from "../components/ExpensesOutput/ExpensesOutput";
 import { getDateMinusDays } from "../util/date";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getExpenses } from "../util/http";
 import { setExpenses } from "../store/expenseSlice";
 
 function RecentExpenses() {
+  const [isLoading, setIsLoading] = useState();
   const dispatch = useDispatch();
   const { expenses } = useSelector((state) => state.expense);
 

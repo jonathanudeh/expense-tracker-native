@@ -17,14 +17,14 @@ const expenseSlice = createSlice({
       state.expenses = inverted;
     },
 
-    deleteExpense: (state, action) => {
+    deleteExpenseStore: (state, action) => {
       // id property
       state.expenses = state.expenses.filter(
         (expense) => expense.id !== action.payload,
       );
     },
 
-    updateExpense: (state, action) => {
+    updateExpenseStore: (state, action) => {
       // id and data obj property
       const { id, expenseData } = action.payload;
 
@@ -44,7 +44,11 @@ const expenseSlice = createSlice({
   },
 });
 
-export const { addExpense, deleteExpense, updateExpense, setExpenses } =
-  expenseSlice.actions;
+export const {
+  addExpense,
+  deleteExpenseStore,
+  updateExpenseStore,
+  setExpenses,
+} = expenseSlice.actions;
 
 export default expenseSlice.reducer;
