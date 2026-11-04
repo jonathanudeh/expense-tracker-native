@@ -1,19 +1,19 @@
-import { useLayoutEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useLayoutEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import IconButton from "../components/ui/IconButton";
 import { GlobalStyles } from "../constants/styles";
-import Button from "../components/ui/Button";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addExpense,
   updateExpenseStore,
   deleteExpenseStore,
 } from "../store/expenseSlice";
-import { nanoid } from "@reduxjs/toolkit";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import { deleteExpense, storeExpense, updateExpense } from "../util/http";
+import LoadingOverlay from "../components/ui/LoadingOverlay";
 
 function ManageExpense({ route, navigation }) {
+  const [isLoading, setIsLoading] = useState(true);
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
@@ -31,8 +31,10 @@ function ManageExpense({ route, navigation }) {
   }, [navigation, isEditing]);
 
   async function deleteExpensehandler() {
+    setIsLoading(true);
     await deleteExpense(editedExpenseId);
     dispatch(deleteExpenseStore(editedExpenseId));
+    // since we are navigating back we dont necessarily need to set loading to false
     navigation.goBack();
   }
 
@@ -41,6 +43,7 @@ function ManageExpense({ route, navigation }) {
   }
 
   async function confirmHandler(expenseData) {
+    setIsLoading(true);
     if (isEditing) {
       dispatch(
         updateExpenseStore({
@@ -58,6 +61,10 @@ function ManageExpense({ route, navigation }) {
     }
 
     navigation.goBack();
+  }
+
+  if (isLoading) {
+    return <LoadingOverlay />;
   }
 
   return (

@@ -4,15 +4,18 @@ import { getDateMinusDays } from "../util/date";
 import { useEffect, useState } from "react";
 import { getExpenses } from "../util/http";
 import { setExpenses } from "../store/expenseSlice";
+import LoadingOverlay from "../components/ui/LoadingOverlay";
 
 function RecentExpenses() {
-  const [isLoading, setIsLoading] = useState();
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const { expenses } = useSelector((state) => state.expense);
 
   useEffect(() => {
     async function getFetchedExpenses() {
+      setIsLoading(true);
       const expenses = await getExpenses();
+      setIsLoading(false);
       dispatch(setExpenses(expenses));
     }
 
@@ -25,6 +28,10 @@ function RecentExpenses() {
   const recentExpenses = expenses.filter((expense) => {
     return new Date(expense.date) > date7DaysAgo;
   });
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <ExpensesOutput
