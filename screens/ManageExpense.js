@@ -11,6 +11,7 @@ import {
 } from "../store/expenseSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
+import { storeExpense } from "../util/http";
 
 function ManageExpense({ route, navigation }) {
   const editedExpenseId = route.params?.expenseId;
@@ -47,6 +48,9 @@ function ManageExpense({ route, navigation }) {
         }),
       );
     } else {
+      // backend communication with firebase
+      storeExpense(expenseData);
+
       const id = nanoid();
       dispatch(addExpense({ id, ...expenseData }));
     }
