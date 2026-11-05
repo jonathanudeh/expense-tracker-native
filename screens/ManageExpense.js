@@ -11,9 +11,11 @@ import {
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
 import { deleteExpense, storeExpense, updateExpense } from "../util/http";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
+import ErrorOverlay from "../components/ui/ErrorOverlay";
 
 function ManageExpense({ route, navigation }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
@@ -32,10 +34,16 @@ function ManageExpense({ route, navigation }) {
 
   async function deleteExpensehandler() {
     setIsLoading(true);
-    await deleteExpense(editedExpenseId);
-    dispatch(deleteExpenseStore(editedExpenseId));
+    try {
+      await deleteExpense(editedExpenseId);
+      dispatch(deleteExpenseStore(editedExpenseId));
+      navigation.goBack();
+    } catch (err) {
+      setError("Could not delete expense, please try again later");
+    } finally {
+      setIsLoading(false);
+    }
     // since we are navigating back we dont necessarily need to set loading to false
-    navigation.goBack();
   }
 
   function cancelHandler() {
@@ -44,27 +52,40 @@ function ManageExpense({ route, navigation }) {
 
   async function confirmHandler(expenseData) {
     setIsLoading(true);
-    if (isEditing) {
-      dispatch(
-        updateExpenseStore({
-          id: editedExpenseId,
-          expenseData,
-        }),
-      );
+    try {
+      if (isEditing) {
+        dispatch(
+          updateExpenseStore({
+            id: editedExpenseId,
+            expenseData,
+          }),
+        );
 
-      await updateExpense(editedExpenseId, expenseData);
-    } else {
-      // backend communication with firebase
-      const id = await storeExpense(expenseData);
+        await updateExpense(editedExpenseId, expenseData);
+      } else {
+        // backend communication with firebase
+        const id = await storeExpense(expenseData);
 
-      dispatch(addExpense({ ...expenseData, id }));
+        dispatch(addExpense({ ...expenseData, id }));
+      }
+      navigation.goBack();
+    } catch (err) {
+      setError(`Could not ${isEditing ? "update expense" : "create expense"}`);
+    } finally {
+      setIsLoading(false);
     }
+  }
 
-    navigation.goBack();
+  function errorHandler() {
+    setError(null);
   }
 
   if (isLoading) {
     return <LoadingOverlay />;
+  }
+
+  if (error && !isLoading) {
+    return <ErrorOverlay message={error} onConfirm={errorHandler} />;
   }
 
   return (
